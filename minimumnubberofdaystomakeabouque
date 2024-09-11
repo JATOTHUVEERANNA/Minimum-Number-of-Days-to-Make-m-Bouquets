@@ -1,0 +1,50 @@
+public class Solution {
+
+    // Method to check if it's possible to make `m` bouquets in `days` days
+    private boolean canMakeBouquets(int[] bloomDay, int m, int k, int days) {
+        int bouquets = 0;
+        int flowers = 0;
+        
+        for (int bloom : bloomDay) {
+            if (bloom <= days) {
+                flowers++;
+                if (flowers == k) {
+                    bouquets++;
+                    flowers = 0; // reset flowers count after making a bouquet
+                }
+            } else {
+                flowers = 0; // reset flowers count if bloom day is too high
+            }
+        }
+        return bouquets >= m;
+    }
+
+    // Method to find the minimum number of days to make `m` bouquets
+    public int minDays(int[] bloomDay, int m, int k) {
+        int n = bloomDay.length;
+
+        // Check if it's possible to make `m` bouquets at all
+        if (m * k > n) return -1;
+        
+        int low = Integer.MAX_VALUE;
+        int high = Integer.MIN_VALUE;
+
+        // Find the minimum and maximum bloom days
+        for (int bloom : bloomDay) {
+            low = Math.min(low, bloom);
+            high = Math.max(high, bloom);
+        }
+
+        // Binary search for the minimum number of days
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (canMakeBouquets(bloomDay, m, k, mid)) {
+                high = mid; // try for fewer days
+            } else {
+                low = mid + 1; // try for more days
+            }
+        }
+
+        return low;
+    }
+}
